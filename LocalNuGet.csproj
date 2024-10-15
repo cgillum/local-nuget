@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0</Version>
+    <Title>LocalNuGet</Title>
+    <Company>Microsoft</Company>
+    <Authors>Chris Gillum</Authors>
+    <Description>Publishes locally-built NuGet packages to a local feed and automatically deletes cached versions of the package.</Description>
+    <PackageTags>NuGet Local</PackageTags>
+    <DebugType>embedded</DebugType>
+    <IsPackable>true</IsPackable>
+    <MinClientVersion>4.0.0</MinClientVersion>
+    <RepositoryUrl>https://github.com/cgillum/local-nuget/</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="build/*" Pack="true" PackagePath="build" />
+    <Content Include="buildMultiTargeting/*" Pack="true" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+</Project>

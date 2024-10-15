@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+  <Target Name="CopyPackage" AfterTargets="Pack" Condition="'$(LocalNuGetEnabled)' == 'true' and '$(PackageId)' != ''">
+    
+    <PropertyGroup>
+      <NuGetPackageFileName>$(PackageId).$(PackageVersion).nupkg</NuGetPackageFileName>
+      <NuGetPackageCacheDir>$([System.IO.Path]::Combine($(NuGetLocalCache), $(PackageId), $(PackageVersion)))</NuGetPackageCacheDir>
+      <NuGetPackageFilePath>$([System.IO.Path]::Combine($(PackageOutputPath), $(NuGetPackageFileName)))</NuGetPackageFilePath>
+      <ExistingLocalNuGetPackageDir>$([System.IO.Path]::Combine($(NuGetLocalFeed), $(PackageId), $(PackageVersion)))</ExistingLocalNuGetPackageDir>
+      <DotNetNuGetCommand>dotnet nuget push "$(NuGetPackageFilePath)" --source "$(NuGetLocalFeed)"</DotNetNuGetCommand>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <CacheDirectoriesToDelete Include="$(NuGetPackageCacheDir)" />
+      <ExistingPackageDirectoriesToDelete Include="$(ExistingLocalNuGetPackageDir)" />
+      <LocalFeedDirectory Include="$(NuGetLocalFeed)" />
+    </ItemGroup>
+    
+    <!-- Delete the cached copy of the current package -->
+    <Message Condition="Exists(@(CacheDirectoriesToDelete))"
+          Text="Deleting cached nuget package '$(NuGetPackageCacheDir)'"
+          Importance="high" />
+    <RemoveDir Directories="@(CacheDirectoriesToDelete)" />
+    
+    <!-- Delete any existing copies of the local nuget package -->
+    <Message Condition="Exists(@(ExistingPackageDirectoriesToDelete))"
+          Text="Deleting existing local nuget package directory '$(ExistingLocalNuGetPackageDir)'"
+          Importance="high" />
+    <RemoveDir Directories="@(ExistingPackageDirectoriesToDelete)" />
+
+    <!-- Create the local feed directory if it doesn't already exist -->
+    <Message Condition="!Exists(@(LocalFeedDirectory))" Importance="high" Text="Creating local NuGet feed '$(NuGetLocalFeed)'" />             
+    <MakeDir Condition="!Exists(@(LocalFeedDirectory))" Directories="@(LocalFeedDirectory)" />
+  
+    <!-- Publish the package to the local feed -->
+    <Message Text="Running command: '$(DotNetNuGetCommand)'" />             
+    <Exec Command="$(DotNetNuGetCommand)" />
+  </Target>
+  
+</Project>

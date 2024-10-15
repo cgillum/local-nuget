@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- LocalNuGet task parameters - these can be overwritten -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <NuGetLocalFeed Condition="'$(NuGetLocalFeed)' == ''">$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))/.nuget/local-feed</NuGetLocalFeed>
+
+    <!-- Need to know where the local nuget cache exists so we can clear cached packages -->
+    <!-- https://docs.microsoft.com/nuget/consume-packages/managing-the-global-packages-and-cache-folders -->
+    <NuGetLocalCache Condition="'$(NuGetLocalCache)' == ''">$(NUGET_PACKAGES)</NuGetLocalCache>
+    <NuGetLocalCache Condition="'$(NuGetLocalCache)' == ''">$([System.Environment]::GetFolderPath(SpecialFolder.UserProfile))/.nuget/packages</NuGetLocalCache>
+
+    <!-- The feature is enabled by default -->
+    <LocalNuGetEnabled Condition="'$(LocalNuGetEnabled)' == ''">true</LocalNuGetEnabled>
+  </PropertyGroup>
+
+</Project>
